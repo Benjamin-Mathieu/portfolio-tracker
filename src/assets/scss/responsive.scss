@@ -1,0 +1,57 @@
+@media only screen and (max-width: 1024px) {
+    #app {
+        .overview {
+            .picture {
+                display: none;
+            }
+        }
+    }
+   
+}
+
+@media only screen and (max-width: 800px) {
+    #app {
+        .search {
+            display: flex; flex-direction: column; align-items: center;
+
+            button {
+                margin-top: 1em;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #app {
+        .search {
+            .inputs {
+                input {
+                    width: 300px;
+                }
+            }
+        }
+        
+        .card-container {
+            
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                .overview {
+                    display: block;
+                }
+            }
+
+            .card {
+                .contact {
+                    .links {
+                        display: none;
+                    }
+                    div:last-child {
+                        margin: 0 auto;
+                    }
+                }
+            }
+        }
+    }
+}
