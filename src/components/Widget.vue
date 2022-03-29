@@ -6,8 +6,10 @@
       @showCrypto="toggleMenu = false"
     ></Nav>
 
-    <Portfolio v-if="toggleMenu === true"></Portfolio>
-    <Cryptos v-if="toggleMenu === false"></Cryptos>
+    <Transition name="toggle" mode="out-in">
+      <Portfolio v-if="toggleMenu === true"></Portfolio>
+      <Cryptos v-else></Cryptos>
+    </Transition>
   </div>
 </template>
 
@@ -30,8 +32,18 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.toggle-enter-active,
+.toggle-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toggle-enter-from,
+.toggle-leave-to {
+  opacity: 0;
+  transform: scale(0.7);
+}
+
 .container {
   height: 100%;
   width: 100%;
@@ -47,17 +59,23 @@ export default {
 
 .bg-blur {
   overflow: hidden;
-  background-color: transparent;
+  // background-color: transparent;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    #fc077d10 0,
+    rgba(255, 255, 255, 0) 100%
+  );
 
-  &::before {
-    content: "";
-    background: url("../assets/img/bg-space.jpg");
-    background-size: cover;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    filter: blur(20px);
-    z-index: -1;
-  }
+  // &::before {
+  //   content: "";
+  //   // background: url("../assets/img/bg-space.jpg");
+  //   // background-size: cover;
+
+  //   height: 100%;
+  //   width: 100%;
+  //   position: absolute;
+  //   filter: blur(20px);
+  //   z-index: -1;
+  // }
 }
 </style>

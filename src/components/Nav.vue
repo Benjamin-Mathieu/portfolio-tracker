@@ -40,7 +40,7 @@ export default {
             padding: 0.5rem;
 
             &.isSelected {
-                background-color: red;
+                background-color: greenyellow;
             }
 
             &:hover {

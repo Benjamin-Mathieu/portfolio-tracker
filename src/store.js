@@ -5,9 +5,10 @@ const URL_API = 'https://api.coingecko.com/api/v3';
 
 export const balance = ref(10000);
 export const cryptos = ref([]);
+export const queryCryptos = ref([]);
 
-export const getListCrypto = async () => {
-    await axios.get(`${URL_API}/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=10&page=1&sparkline=false`,
+export const getListCrypto = async (perPage) => {
+    await axios.get(`${URL_API}/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`,
         {
             headers: {
                 'Accept': 'application/json'
@@ -18,6 +19,16 @@ export const getListCrypto = async () => {
         console.log(res.data);
     }).catch(err => {
         console.error(err);
-    })
+    });
+}
 
+export const searchCrypto = async (query) => {
+    await axios.get(`${URL_API}/search?query=${query}`)
+        .then(res => {
+            console.log(res.data);
+            queryCryptos.value = res.data.coins;
+        })
+        .catch(err => {
+            console.error(err);
+        });
 }

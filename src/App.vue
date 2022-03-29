@@ -25,5 +25,6 @@ export default {
   height: 100vh;
   box-sizing: border-box;
   color: white;
+  background-color: #212429;
 }
 </style>

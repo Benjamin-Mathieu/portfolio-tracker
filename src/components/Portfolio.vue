@@ -20,7 +20,7 @@ export default {
     components: { Chart, ListAssets, Overview },
 
     setup() {
-        getListCrypto();
+        getListCrypto(20);
     }
 }
 </script>

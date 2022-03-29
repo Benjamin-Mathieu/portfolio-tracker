@@ -1,15 +1,15 @@
 <template>
     <div class="overview">
-        <div>
-            <span>Solde actuel</span>
+        <div class="user-balance">
+            <span style="font-size: 28px">Solde actuel</span>
             <h2>{{ balance + " €" }}</h2>
         </div>
         <div>
-            <button @click="modalOpened = true" class="btn btn-gradient btn-glow">Ajouter</button>
+            <button @click="openModal()" class="btn btn-gradient btn-glow">Ajouter</button>
         </div>
     </div>
 
-    <Modal :modalOpened="modalOpened"></Modal>
+    <Modal :show="modalOpened" @closeModal="modalOpened = false"></Modal>
 </template>
 
 <script>
@@ -24,7 +24,12 @@ export default {
     setup() {
         const modalOpened = ref(false);
 
-        return { balance, modalOpened };
+        const openModal = () => {
+            modalOpened.value = true;
+            console.log(modalOpened.value);
+        }
+
+        return { balance, modalOpened, openModal };
     },
 }
 </script>
@@ -37,8 +42,14 @@ export default {
     justify-content: space-around;
     @include buttonStyle();
 
+    .user-balance {
+        border: 2px solid greenyellow;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
     h2 {
-        color: $base-color;
+        color: greenyellow;
     }
     .btn-gradient {
         padding: 0.5rem;
