@@ -15,7 +15,7 @@
 <script>
 import { ref } from "vue"
 import { balance } from "../store"
-import Modal from "./Modal.vue"
+import Modal from "./ModalAddAsset.vue"
 
 export default {
     name: "Overview",

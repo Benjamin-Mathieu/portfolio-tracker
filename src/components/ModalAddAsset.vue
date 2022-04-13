@@ -1,12 +1,12 @@
 
 <template>
     <teleport v-if="show === true" to="body">
-        <div @click.self="$emit('closeModal')" class="modal">
+        <div @click.self="close()" class="modal">
             <div class="modal-content">
-                <button id="btn-close" @click="$emit('closeModal')">X</button>
+                <button id="btn-close" @click="close()">X</button>
 
                 <transition name="fade" mode="out-in">
-                    <section v-if="!assetChosen" class="choose-asset">
+                    <section v-if="!asset.chosen" class="choose-asset">
                         <div class="header">
                             <h1 style="color: white">Choisissez un coin</h1>
                         </div>
@@ -16,7 +16,7 @@
                         <div class="list-container">
                             <TransitionGroup name="fade " tag="div">
                                 <div
-                                    @click="assetChosen = true"
+                                    @click="asset.chosen = true; getPrice(crypto.id)"
                                     class="crypto"
                                     v-for="crypto in queryCryptos"
                                     :key="crypto.id"
@@ -37,6 +37,25 @@
                         <div class="header">
                             <h1 style="color: white">Transaction</h1>
                         </div>
+                        <div class="inputs">
+                            <div>
+                                <label for="inp-qty">Quantité</label>
+                                <input
+                                    v-model="asset.qty"
+                                    type="text"
+                                    placeholder="0.00"
+                                    id="inp-qty"
+                                />
+                            </div>
+                            <div>
+                                <label for="inp-price">Prix par coin</label>
+                                <input v-model="asset.price" type="text" id="inp-price" />
+                            </div>
+                        </div>
+                        <div class="total">
+                            <h3>Total dépensé</h3>
+                            <span>{{ total + " €" }}</span>
+                        </div>
                     </section>
                 </transition>
             </div>
@@ -45,8 +64,9 @@
 </template>
 
 <script>
-import { ref, watch } from "vue"
-import { cryptos, searchCrypto, queryCryptos } from "../store"
+import { computed } from "@vue/reactivity";
+import { onMounted, reactive, ref, watch } from "vue"
+import { cryptos, searchCrypto, queryCryptos, getPriceCrypto } from "../store"
 
 export default {
     name: 'Modal',
@@ -57,15 +77,38 @@ export default {
     },
     emits: ['closeModal'],
 
-    setup() {
+    setup(props, { emit }) {
         const query = ref('');
-        const assetChosen = ref(false);
+        const asset = reactive({
+            chosen: false,
+            price: '',
+            qty: '',
+        });
 
         watch(query, (newVal, oldVal) => {
             searchCrypto(newVal);
+        });
+
+        const total = computed(() => {
+            if (asset.qty !== '') {
+                return asset.qty * asset.price;
+            } else {
+                return 0;
+            }
         })
 
-        return { assetChosen, cryptos, query, queryCryptos }
+        const close = () => {
+            emit('closeModal');
+            query.value = '';
+            asset.chosen = false;
+        }
+
+        const getPrice = async (id) => {
+            const price = await getPriceCrypto(id);
+            asset.price = price;
+        }
+
+        return { asset, cryptos, query, queryCryptos, total, getPrice, close }
     }
 }
 </script>
@@ -95,7 +138,6 @@ export default {
         section.choose-asset {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             height: 100%;
 
             .list-container {
@@ -110,6 +152,10 @@ export default {
                     align-items: center;
                     justify-content: space-between;
                     padding: 0.5rem;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
                     .p-logo {
                         display: flex;
                         align-items: center;

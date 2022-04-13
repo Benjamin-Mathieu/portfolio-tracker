@@ -1,19 +1,50 @@
 <template>
-    <nav class="menu">
-        <ul>
-            <li
-                @click="$emit('showPortfolio')"
-                :class="toggleMenu === true ? 'isSelected' : null"
-            >Portfolio</li>
-            <li
-                @click="$emit('showCrypto')"
-                :class="toggleMenu === false ? 'isSelected' : null"
-            >Cryptos</li>
-        </ul>
-    </nav>
+    <div class="container">
+        <div class="top-bar">
+            <div>
+                <span>
+                    Monnaies:
+                    <span
+                        style="color: greenyellow"
+                    >{{ globalData.active_cryptocurrencies }}</span>
+                </span>
+            </div>
+            <div>
+                <span>
+                    Marchés:
+                    <span style="color: greenyellow">{{ globalData.markets }}</span>
+                </span>
+            </div>
+            <div>
+                <span>
+                    Prédominance:
+                    <span
+                        style="color: greenyellow"
+                    >{{ "BTC " + globalData.market_cap_percentage.btc.toFixed(2) + "% ETH " + globalData.market_cap_percentage.eth.toFixed(2) + "%" }}</span>
+                </span>
+            </div>
+            <div class="options">
+                <div>Choix langue</div>
+            </div>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li
+                    @click="$emit('showPortfolio')"
+                    :class="toggleMenu === true ? 'isSelected' : null"
+                >Portfolio</li>
+                <li
+                    @click="$emit('showCrypto')"
+                    :class="toggleMenu === false ? 'isSelected' : null"
+                >Cryptos</li>
+            </ul>
+        </nav>
+    </div>
 </template>
 
-<script>
+<script>import { onMounted } from "vue"
+import { getGlobalData, globalData } from "../store"
+
 
 export default {
     name: 'Nav',
@@ -22,29 +53,53 @@ export default {
             type: Boolean
         }
     },
-    emits: ['showPortfolio, showCrypto']
+    emits: ['showPortfolio, showCrypto'],
+
+    setup() {
+        onMounted(async () => {
+            await getGlobalData();
+        });
+
+        return { globalData }
+    }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.menu {
-    margin: 3rem 0;
-    ul {
+.container {
+    .top-bar {
+        width: 100%;
+        border-bottom: 1px solid whitesmoke;
+        margin-bottom: 1rem;
         display: flex;
-
-        li {
-            font-weight: bold;
-            list-style: none;
-            font-size: 2rem;
+        align-items: center;
+        font-size: small;
+        div {
             padding: 0.5rem;
+        }
 
-            &.isSelected {
-                background-color: greenyellow;
-            }
+        .options {
+            margin-left: auto;
+        }
+    }
+    .menu {
+        ul {
+            display: flex;
 
-            &:hover {
-                cursor: pointer;
+            li {
+                font-weight: bold;
+                list-style: none;
+                font-size: 2rem;
+                padding: 0.5rem;
+
+                &.isSelected {
+                    background-color: greenyellow;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
     }
