@@ -1,6 +1,6 @@
 <template>
     <div class="list">
-        <h3>Vos actifs</h3>
+        <h3>{{ $t('listAssets.yourAssets') }}</h3>
     </div>
 </template>
 

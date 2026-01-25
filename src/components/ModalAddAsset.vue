@@ -8,10 +8,10 @@
                 <transition name="fade" mode="out-in">
                     <section v-if="!asset.chosen" class="choose-asset">
                         <div class="header">
-                            <h1 style="color: white">Choisissez un coin</h1>
+                            <h1 style="color: white">{{ $t('modal.chooseCoin') }}</h1>
                         </div>
                         <div class="div-input">
-                            <input v-model="query" type="text" placeholder="Rechercher" />
+                            <input v-model="query" type="text" :placeholder="$t('modal.search')" />
                         </div>
                         <div class="list-container">
                             <TransitionGroup name="fade " tag="div">
@@ -35,11 +35,11 @@
 
                     <section v-else class="transaction">
                         <div class="header">
-                            <h1 style="color: white">Transaction</h1>
+                            <h1 style="color: white">{{ $t('modal.transaction') }}</h1>
                         </div>
                         <div class="inputs">
                             <div>
-                                <label for="inp-qty">Quantité</label>
+                                <label for="inp-qty">{{ $t('modal.quantity') }}</label>
                                 <input
                                     v-model="asset.qty"
                                     type="text"
@@ -48,12 +48,12 @@
                                 />
                             </div>
                             <div>
-                                <label for="inp-price">Prix par coin</label>
+                                <label for="inp-price">{{ $t('modal.pricePerCoin') }}</label>
                                 <input v-model="asset.price" type="text" id="inp-price" />
                             </div>
                         </div>
                         <div class="total">
-                            <h3>Total dépensé</h3>
+                            <h3>{{ $t('modal.totalSpent') }}</h3>
                             <span>{{ total + " €" }}</span>
                         </div>
                     </section>
@@ -62,6 +62,7 @@
         </div>
     </teleport>
 </template>
+
 
 <script>
 import { computed } from "@vue/reactivity";

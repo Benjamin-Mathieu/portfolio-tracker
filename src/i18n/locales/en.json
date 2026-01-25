@@ -1,0 +1,31 @@
+{
+    "nav": {
+        "currencies": "Currencies",
+        "markets": "Markets",
+        "dominance": "Dominance",
+        "portfolio": "Portfolio",
+        "cryptos": "Cryptos",
+        "language": "Language"
+    },
+    "overview": {
+        "currentBalance": "Current Balance",
+        "add": "Add"
+    },
+    "modal": {
+        "chooseCoin": "Choose a coin",
+        "search": "Search",
+        "transaction": "Transaction",
+        "quantity": "Quantity",
+        "pricePerCoin": "Price per coin",
+        "totalSpent": "Total spent"
+    },
+    "cryptos": {
+        "rank": "Rank",
+        "coin": "Coin",
+        "currentPrice": "Current Price",
+        "h24": "24h"
+    },
+    "listAssets": {
+        "yourAssets": "Your assets"
+    }
+}

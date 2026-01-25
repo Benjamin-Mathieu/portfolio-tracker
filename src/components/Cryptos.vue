@@ -2,10 +2,10 @@
 <template>
     <section class="cryptos">
         <table>
-            <th>Rang</th>
-            <th>Monnaie</th>
-            <th>Cours actuel</th>
-            <th>24h</th>
+            <th>{{ $t('cryptos.rank') }}</th>
+            <th>{{ $t('cryptos.coin') }}</th>
+            <th>{{ $t('cryptos.currentPrice') }}</th>
+            <th>{{ $t('cryptos.h24') }}</th>
             <tr class="row" v-for="crypto in cryptos" :key="crypto.id">
                 <td>{{ crypto.market_cap_rank }}</td>
                 <td class="td-logo">

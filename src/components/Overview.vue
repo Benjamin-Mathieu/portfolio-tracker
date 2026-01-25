@@ -1,13 +1,14 @@
 <template>
     <div class="overview">
         <div class="user-balance">
-            <span style="font-size: 28px">Solde actuel</span>
+            <span style="font-size: 28px">{{ $t('overview.currentBalance') }}</span>
             <h2>{{ balance + " €" }}</h2>
         </div>
         <div>
-            <button @click="openModal()" class="btn btn-gradient btn-glow">Ajouter</button>
+            <button @click="openModal()" class="btn btn-gradient btn-glow">{{ $t('overview.add') }}</button>
         </div>
     </div>
+
 
     <Modal :show="modalOpened" @closeModal="modalOpened = false"></Modal>
 </template>
