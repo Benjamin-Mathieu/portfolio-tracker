@@ -17,7 +17,10 @@
         "transaction": "Transaction",
         "quantity": "Quantity",
         "pricePerCoin": "Price per coin",
-        "totalSpent": "Total spent"
+        "totalSpent": "Total spent",
+        "add": "Add",
+        "cancel": "Cancel",
+        "save": "Save"
     },
     "cryptos": {
         "rank": "Rank",
@@ -26,6 +29,18 @@
         "h24": "24h"
     },
     "listAssets": {
-        "yourAssets": "Your assets"
+        "yourAssets": "Your assets",
+        "symbol": "Symbol",
+        "quantity": "Quantity",
+        "avgPrice": "Avg Price",
+        "totalInvested": "Total Invested",
+        "action": "Action",
+        "delete": "Delete",
+        "edit": "Edit",
+        "export": "Export",
+        "import": "Import",
+        "asset": "Asset",
+        "currentPrice": "Price",
+        "profitLoss": "P/L"
     }
 }

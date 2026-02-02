@@ -17,7 +17,10 @@
         "transaction": "Transaction",
         "quantity": "Quantité",
         "pricePerCoin": "Prix par coin",
-        "totalSpent": "Total dépensé"
+        "totalSpent": "Total dépensé",
+        "add": "Ajouter",
+        "cancel": "Annuler",
+        "save": "Enregistrer"
     },
     "cryptos": {
         "rank": "Rang",
@@ -26,6 +29,18 @@
         "h24": "24h"
     },
     "listAssets": {
-        "yourAssets": "Vos actifs"
+        "yourAssets": "Vos actifs",
+        "symbol": "Symbole",
+        "quantity": "Quantité",
+        "avgPrice": "Prix moy.",
+        "totalInvested": "Total investi",
+        "action": "Action",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "export": "Exporter",
+        "import": "Importer",
+        "asset": "Actif",
+        "currentPrice": "Prix",
+        "profitLoss": "P/L"
     }
 }

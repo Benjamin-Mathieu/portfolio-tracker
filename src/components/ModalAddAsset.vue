@@ -16,7 +16,7 @@
                         <div class="list-container">
                             <TransitionGroup name="fade " tag="div">
                                 <div
-                                    @click="asset.chosen = true; getPrice(crypto.id)"
+                                    @click="selectCrypto(crypto)"
                                     class="crypto"
                                     v-for="crypto in queryCryptos"
                                     :key="crypto.id"
@@ -42,19 +42,31 @@
                                 <label for="inp-qty">{{ $t('modal.quantity') }}</label>
                                 <input
                                     v-model="asset.qty"
-                                    type="text"
+                                    type="number"
+                                    min="0"
+                                    step="any"
                                     placeholder="0.00"
                                     id="inp-qty"
                                 />
                             </div>
                             <div>
                                 <label for="inp-price">{{ $t('modal.pricePerCoin') }}</label>
-                                <input v-model="asset.price" type="text" id="inp-price" />
+                                <input 
+                                    v-model="asset.price" 
+                                    type="number" 
+                                    min="0" 
+                                    step="any" 
+                                    id="inp-price" 
+                                />
                             </div>
                         </div>
                         <div class="total">
                             <h3>{{ $t('modal.totalSpent') }}</h3>
-                            <span>{{ total + " €" }}</span>
+                            <span>{{ total.toFixed(2) + " €" }}</span>
+                        </div>
+                        <div class="actions">
+                            <button class="btn-cancel" @click="asset.chosen = false">{{ $t('modal.cancel') }}</button>
+                            <button class="btn-submit" @click="submitTransaction" :disabled="!isValid">{{ $t('modal.add') }}</button>
                         </div>
                     </section>
                 </transition>
@@ -66,8 +78,8 @@
 
 <script>
 import { computed } from "@vue/reactivity";
-import { onMounted, reactive, ref, watch } from "vue"
-import { cryptos, searchCrypto, queryCryptos, getPriceCrypto } from "../store"
+import { reactive, ref, watch } from "vue"
+import { cryptos, searchCrypto, queryCryptos, getPriceCrypto, addTransaction } from "../store"
 
 export default {
     name: 'Modal',
@@ -81,35 +93,58 @@ export default {
     setup(props, { emit }) {
         const query = ref('');
         const asset = reactive({
+            id: '',
+            name: '',
+            symbol: '',
             chosen: false,
-            price: '',
-            qty: '',
+            price: 0,
+            qty: 0,
         });
 
-        watch(query, (newVal, oldVal) => {
+        watch(query, (newVal) => {
             searchCrypto(newVal);
         });
 
         const total = computed(() => {
-            if (asset.qty !== '') {
-                return asset.qty * asset.price;
-            } else {
-                return 0;
-            }
+            return asset.qty * asset.price;
         })
+
+        const isValid = computed(() => {
+            return asset.qty > 0 && asset.price > 0;
+        });
 
         const close = () => {
             emit('closeModal');
             query.value = '';
             asset.chosen = false;
+            asset.qty = 0;
+            asset.price = 0;
         }
 
-        const getPrice = async (id) => {
-            const price = await getPriceCrypto(id);
+        const selectCrypto = async (crypto) => {
+            asset.id = crypto.id;
+            asset.name = crypto.name;
+            asset.symbol = crypto.symbol;
+            asset.chosen = true;
+            const price = await getPriceCrypto(crypto.id);
             asset.price = price;
         }
 
-        return { asset, cryptos, query, queryCryptos, total, getPrice, close }
+        const submitTransaction = () => {
+            if (!isValid.value) return;
+
+            addTransaction({
+                assetId: asset.id,
+                assetName: asset.name,
+                symbol: asset.symbol.toUpperCase(),
+                quantity: asset.qty,
+                purchasePrice: asset.price
+            });
+
+            close();
+        }
+
+        return { asset, cryptos, query, queryCryptos, total, isValid, selectCrypto, close, submitTransaction }
     }
 }
 </script>

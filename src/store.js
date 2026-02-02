@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import axios from 'axios';
 
 const URL_API = 'https://api.coingecko.com/api/v3';
@@ -7,47 +7,147 @@ export const balance = ref(10000);
 export const cryptos = ref([]);
 export const queryCryptos = ref([]);
 export const globalData = ref([]);
-export const porfolio = reactive({
-    assets: []
+
+// Transactions state with local storage persistence
+const savedTransactions = localStorage.getItem('transactions');
+export const transactions = ref(savedTransactions ? JSON.parse(savedTransactions) : []);
+
+export const saveTransactions = () => {
+    localStorage.setItem('transactions', JSON.stringify(transactions.value));
+};
+
+export const addTransaction = (transaction) => {
+    transactions.value.push({
+        ...transaction,
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString()
+    });
+    saveTransactions();
+};
+
+export const deleteTransaction = (id) => {
+    transactions.value = transactions.value.filter(t => t.id !== id);
+    saveTransactions();
+};
+
+export const editTransaction = (id, updatedData) => {
+    const index = transactions.value.findIndex(t => t.id === id);
+    if (index !== -1) {
+        transactions.value[index] = { ...transactions.value[index], ...updatedData };
+        saveTransactions();
+    }
+};
+
+export const importPortfolio = (data) => {
+    try {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed)) {
+            transactions.value = parsed;
+            saveTransactions();
+            return true;
+        }
+    } catch (e) {
+        console.error("Failed to import portfolio:", e);
+    }
+    return false;
+};
+
+export const exportPortfolio = () => {
+    const dataStr = JSON.stringify(transactions.value, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'portfolio.json';
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+};
+
+// Aggregated Portfolio Logic
+export const aggregatedPortfolio = computed(() => {
+    const map = new Map();
+
+    transactions.value.forEach(t => {
+        if (!map.has(t.symbol)) {
+            map.set(t.symbol, {
+                assetId: t.assetId,
+                assetName: t.assetName,
+                symbol: t.symbol,
+                totalQuantity: 0,
+                totalCost: 0,
+                transactions: []
+            });
+        }
+        const asset = map.get(t.symbol);
+        asset.totalQuantity += parseFloat(t.quantity);
+        asset.totalCost += parseFloat(t.quantity) * parseFloat(t.purchasePrice);
+        asset.transactions.push(t);
+    });
+
+    return Array.from(map.values()).map(asset => {
+        // Find current price and image from cryptos list if available
+        const cryptoData = cryptos.value.find(c => c.symbol.toUpperCase() === asset.symbol.toUpperCase());
+        const currentPrice = cryptoData ? cryptoData.current_price : 0;
+        const image = cryptoData ? cryptoData.image : null;
+
+        const avgPrice = asset.totalQuantity > 0 ? asset.totalCost / asset.totalQuantity : 0;
+        const totalInvested = asset.totalCost;
+        const currentValue = asset.totalQuantity * currentPrice;
+        const profitLoss = currentValue - totalInvested;
+        const profitLossPercentage = totalInvested > 0 ? (profitLoss / totalInvested) * 100 : 0;
+
+        return {
+            ...asset,
+            image,
+            currentPrice,
+            avgPrice,
+            totalInvested,
+            currentValue,
+            profitLoss,
+            profitLossPercentage
+        };
+    });
 });
 
 export const getListCrypto = async (perPage) => {
-    await axios.get(`${URL_API}/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`,
-        {
-            headers: {
-                'Accept': 'application/json'
-            }
-        }
-    ).then(res => {
+    try {
+        const res = await axios.get(`${URL_API}/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`, {
+            headers: { 'Accept': 'application/json' }
+        });
         cryptos.value = res.data;
-        console.log(res.data);
-    }).catch(err => {
+    } catch (err) {
         console.error(err);
-    });
+    }
 }
 
 export const searchCrypto = async (query) => {
-    await axios.get(`${URL_API}/search?query=${query}`)
-        .then(res => {
-            console.log(res.data);
-            queryCryptos.value = res.data.coins;
-        })
-        .catch(err => {
-            console.error(err);
-        });
+    if (!query) {
+        queryCryptos.value = [];
+        return;
+    }
+    try {
+        const res = await axios.get(`${URL_API}/search?query=${query}`);
+        queryCryptos.value = res.data.coins;
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 export const getGlobalData = async () => {
-    await axios.get(`${URL_API}/global`)
-        .then(res => {
-            globalData.value = res.data.data;
-        })
-        .catch(err => {
-            console.error(err);
-        });
+    try {
+        const res = await axios.get(`${URL_API}/global`);
+        globalData.value = res.data.data;
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 export const getPriceCrypto = async (id) => {
-    const req = await axios.get(`${URL_API}/simple/price?ids=${id}&vs_currencies=eur`);
-    return req.data[id].eur;
+    try {
+        const req = await axios.get(`${URL_API}/simple/price?ids=${id}&vs_currencies=eur`);
+        return req.data[id].eur;
+    } catch (err) {
+        console.error(err);
+        return 0;
+    }
 }
