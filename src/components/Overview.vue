@@ -1,14 +1,19 @@
+
 <template>
-    <div class="overview">
-        <div class="user-balance">
-            <span style="font-size: 28px">{{ $t('overview.currentBalance') }}</span>
-            <h2>{{ balance + " €" }}</h2>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6 px-4 py-8">
+        <div class="bg-gray-900 border border-crypto-green rounded-2xl p-6 flex flex-col items-center md:items-start transition-all duration-300 hover:shadow-lg">
+            <span class="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">{{ $t('overview.currentBalance') }}</span>
+            <h2 class="text-4xl font-bold text-crypto-green">{{ balance.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}</h2>
         </div>
         <div>
-            <button @click="openModal()" class="btn btn-gradient btn-glow">{{ $t('overview.add') }}</button>
+            <button @click="openModal()" class="btn-primary flex items-center gap-2 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="12 4v16m8-8H4" />
+                </svg>
+                <span class="text-lg">{{ $t('overview.add') }}</span>
+            </button>
         </div>
     </div>
-
 
     <Modal :show="modalOpened" @closeModal="modalOpened = false"></Modal>
 </template>
@@ -27,7 +32,6 @@ export default {
 
         const openModal = () => {
             modalOpened.value = true;
-            console.log(modalOpened.value);
         }
 
         return { balance, modalOpened, openModal };
@@ -35,26 +39,5 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-.overview {
-    margin-top: 1rem;
-    display: flex;
-    justify-content: space-around;
-    @include buttonStyle();
-
-    .user-balance {
-        border: 2px solid greenyellow;
-        border-radius: 8px;
-        padding: 1rem;
-    }
-
-    h2 {
-        color: greenyellow;
-    }
-    .btn-gradient {
-        padding: 0.5rem;
-        border-radius: 5px;
-    }
-}
+<style scoped>
 </style>

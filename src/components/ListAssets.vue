@@ -1,90 +1,132 @@
 
 <template>
-    <div class="list">
-        <div class="header-actions">
-            <h3>{{ $t('listAssets.yourAssets') }}</h3>
-            <div class="data-actions">
-                <button @click="exportPortfolio" class="btn-secondary">{{ $t('listAssets.export') }}</button>
-                <label class="btn-secondary import-label">
+    <div class="px-4 py-8 max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <h3 class="text-2xl font-bold text-white">{{ $t('listAssets.yourAssets') }}</h3>
+            <div class="flex gap-3">
+                <button @click="exportPortfolio" class="btn-secondary flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    {{ $t('listAssets.export') }}
+                </button>
+                <label class="btn-secondary flex items-center gap-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+                    </svg>
                     {{ $t('listAssets.import') }}
-                    <input type="file" @change="handleImport" accept=".json" style="display: none;" />
+                    <input type="file" @change="handleImport" accept=".json" class="hidden" />
                 </label>
             </div>
         </div>
 
-        <div v-if="aggregatedPortfolio.length === 0" class="empty-state">
-            <p>{{ $t('listAssets.noAssets') || "No assets added yet." }}</p>
+        <div v-if="aggregatedPortfolio.length === 0" class="text-center py-20 border-2 border-dashed border-gray-800 rounded-2xl">
+            <p class="text-gray-500 text-lg">{{ $t('listAssets.noAssets') || "No assets added yet." }}</p>
         </div>
 
-        <div v-else class="portfolio-container">
-            <table class="portfolio-table">
+        <div v-else class="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900">
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr>
-                        <th @click="handleSort('assetName')" class="sortable">
-                            {{ $t('listAssets.asset') || "Asset" }}
-                            <span v-if="sortBy === 'assetName'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                    <tr class="bg-gray-800 text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                        <th @click="handleSort('assetName')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.asset') || "Asset" }}
+                                <span v-if="sortBy === 'assetName'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th @click="handleSort('symbol')" class="sortable">
-                            {{ $t('listAssets.symbol') }}
-                            <span v-if="sortBy === 'symbol'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                        <th @click="handleSort('symbol')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.symbol') }}
+                                <span v-if="sortBy === 'symbol'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th @click="handleSort('totalQuantity')" class="sortable">
-                            {{ $t('listAssets.quantity') }}
-                            <span v-if="sortBy === 'totalQuantity'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                        <th @click="handleSort('totalQuantity')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.quantity') }}
+                                <span v-if="sortBy === 'totalQuantity'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th @click="handleSort('currentPrice')" class="sortable">
-                            {{ $t('listAssets.currentPrice') || "Price" }}
-                            <span v-if="sortBy === 'currentPrice'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                        <th @click="handleSort('currentPrice')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.currentPrice') || "Price" }}
+                                <span v-if="sortBy === 'currentPrice'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th @click="handleSort('avgPrice')" class="sortable">
-                            {{ $t('listAssets.avgPrice') }}
-                            <span v-if="sortBy === 'avgPrice'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                        <th @click="handleSort('avgPrice')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.avgPrice') }}
+                                <span v-if="sortBy === 'avgPrice'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th @click="handleSort('totalInvested')" class="sortable">
-                            {{ $t('listAssets.totalInvested') }}
-                            <span v-if="sortBy === 'totalInvested'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                        <th @click="handleSort('totalInvested')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.totalInvested') }}
+                                <span v-if="sortBy === 'totalInvested'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th @click="handleSort('profitLoss')" class="sortable">
-                            {{ $t('listAssets.profitLoss') || "P/L" }}
-                            <span v-if="sortBy === 'profitLoss'">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                        <th @click="handleSort('profitLoss')" class="p-4 cursor-pointer hover:text-white transition-colors">
+                            <div class="flex items-center gap-2">
+                                {{ $t('listAssets.profitLoss') || "P/L" }}
+                                <span v-if="sortBy === 'profitLoss'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                            </div>
                         </th>
-                        <th>{{ $t('listAssets.action') }}</th>
+                        <th class="p-4">{{ $t('listAssets.action') }}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-800">
                     <template v-for="asset in sortedPortfolio" :key="asset.symbol">
-                        <tr class="asset-row" @click="toggleDetails(asset.symbol)">
-                            <td class="asset-name-cell">
-                                <img v-if="asset.image" :src="asset.image" class="asset-logo" />
-                                <span>{{ asset.assetName }}</span>
-                            </td>
-                            <td>{{ asset.symbol }}</td>
-                            <td>{{ formatCrypto(asset.totalQuantity) }}</td>
-                            <td>{{ formatCurrency(asset.currentPrice) }}</td>
-                            <td>{{ formatCurrency(asset.avgPrice) }}</td>
-                            <td>{{ formatCurrency(asset.totalInvested) }}</td>
-                            <td :class="['pl-cell', asset.profitLoss >= 0 ? 'profit' : 'loss']">
-                                <div class="pl-values">
-                                    <span>{{ formatCurrency(asset.profitLoss) }}</span>
-                                    <span class="pl-percent">({{ asset.profitLossPercentage.toFixed(2) }}%)</span>
+                        <tr 
+                            class="hover:bg-gray-800 cursor-pointer transition-colors duration-200 group" 
+                            @click="toggleDetails(asset.symbol)"
+                        >
+                            <td class="p-4">
+                                <div class="flex items-center gap-3">
+                                    <img v-if="asset.image" :src="asset.image" class="w-8 h-8 rounded-full" />
+                                    <span class="font-semibold text-white">{{ asset.assetName }}</span>
                                 </div>
                             </td>
-                            <td>
-                                <span class="toggle-icon">{{ expandedAssets.includes(asset.symbol) ? '▼' : '▶' }}</span>
+                            <td class="p-4 text-gray-400 font-medium">{{ asset.symbol }}</td>
+                            <td class="p-4 text-white font-medium">{{ formatCrypto(asset.totalQuantity) }}</td>
+                            <td class="p-4 text-white font-medium">{{ formatCurrency(asset.currentPrice) }}</td>
+                            <td class="p-4 text-white font-medium">{{ formatCurrency(asset.avgPrice) }}</td>
+                            <td class="p-4 text-white font-medium">{{ formatCurrency(asset.totalInvested) }}</td>
+                            <td class="p-4">
+                                <div :class="[asset.profitLoss >= 0 ? 'text-green-400' : 'text-red-400', 'flex flex-col']">
+                                    <span class="font-bold">{{ formatCurrency(asset.profitLoss) }}</span>
+                                    <span class="text-xs opacity-80">{{ asset.profitLossPercentage.toFixed(2) }}%</span>
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                <svg 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    class="h-5 w-5 text-gray-600 group-hover:text-white transition-transform duration-300"
+                                    :style="expandedAssets.includes(asset.symbol) ? 'transform: rotate(180deg)' : ''"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="19 9l-7 7-7-7" />
+                                </svg>
                             </td>
                         </tr>
-                        <tr v-if="expandedAssets.includes(asset.symbol)" class="details-row">
-                            <td colspan="8">
-                                <div class="transactions-list">
-                                    <div v-for="t in asset.transactions" :key="t.id" class="transaction-item">
-                                        <div class="t-info">
-                                            <span class="t-date">{{ formatDate(t.timestamp) }}</span>
-                                            <span class="t-qty">{{ formatCrypto(t.quantity) }} {{ t.symbol }}</span>
-                                            <span class="t-price">@ {{ formatCurrency(t.purchasePrice) }}</span>
+                        <tr v-if="expandedAssets.includes(asset.symbol)">
+                            <td colspan="8" class="p-0 bg-gray-800">
+                                <div class="px-8 py-4 space-y-2 border-l-2 border-crypto-green ml-4 my-2">
+                                    <div v-for="t in asset.transactions" :key="t.id" class="flex items-center justify-between py-2 border-b border-gray-700 transaction-item">
+                                        <div class="flex gap-8 text-sm">
+                                            <span class="text-gray-500 w-24">{{ formatDate(t.timestamp) }}</span>
+                                            <span class="text-white font-medium w-32">{{ formatCrypto(t.quantity) }} {{ t.symbol }}</span>
+                                            <span class="text-gray-400">@ {{ formatCurrency(t.purchasePrice) }}</span>
                                         </div>
-                                        <div class="t-actions">
-                                            <button @click.stop="startEdit(t)" class="btn-icon">✏️</button>
-                                            <button @click.stop="confirmDelete(t.id)" class="btn-icon btn-delete">🗑️</button>
+                                        <div class="flex gap-2 t-actions">
+                                            <button @click.stop="startEdit(t)" class="p-2 hover:bg-gray-800 rounded-md text-gray-400 hover:text-blue-400 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button @click.stop="confirmDelete(t.id)" class="p-2 hover:bg-gray-800 rounded-md text-gray-400 hover:text-red-400 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -95,20 +137,23 @@
             </table>
         </div>
 
-        <!-- Edit Modal (Simple Inline or Separate) -->
         <teleport v-if="editingTransaction" to="body">
-            <div class="modal edit-modal">
-                <div class="modal-content">
-                    <h3>{{ $t('listAssets.edit') }} {{ editingTransaction.assetName }}</h3>
-                    <div class="inputs">
-                        <label>{{ $t('modal.quantity') }}</label>
-                        <input type="number" step="any" v-model="editingTransaction.quantity" />
-                        <label>{{ $t('modal.pricePerCoin') }}</label>
-                        <input type="number" step="any" v-model="editingTransaction.purchasePrice" />
+            <div class="modal-overlay">
+                <div class="modal-box w-full max-w-md">
+                    <h3 class="text-xl font-bold text-white mb-6">{{ $t('listAssets.edit') }} {{ editingTransaction.assetName }}</h3>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-400">{{ $t('modal.quantity') }}</label>
+                            <input type="number" step="any" v-model="editingTransaction.quantity" class="input-field" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-400">{{ $t('modal.pricePerCoin') }}</label>
+                            <input type="number" step="any" v-model="editingTransaction.purchasePrice" class="input-field" />
+                        </div>
                     </div>
-                    <div class="actions">
-                        <button @click="editingTransaction = null" class="btn-cancel">{{ $t('modal.cancel') }}</button>
-                        <button @click="saveEdit" class="btn-submit">{{ $t('modal.save') }}</button>
+                    <div class="flex justify-end gap-3 mt-8">
+                        <button @click="editingTransaction = null" class="btn-secondary">{{ $t('modal.cancel') }}</button>
+                        <button @click="saveEdit" class="btn-primary">{{ $t('modal.save') }}</button>
                     </div>
                 </div>
             </div>
@@ -234,233 +279,12 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.list {
-    margin: 2rem auto;
-    max-width: 1000px;
-    padding: 1rem;
-    color: white;
-
-    .header-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        h3 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .data-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-    }
-
-    .btn-secondary {
-        background: #333;
-        color: white;
-        border: 1px solid #444;
-        padding: 0.4rem 0.8rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        &:hover {
-            background: #444;
-        }
-    }
-
-    .import-label {
-        display: inline-block;
-    }
-
-    .portfolio-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-
-        th {
-            padding: 1rem;
-            border-bottom: 2px solid #333;
-            color: #aaa;
-            font-weight: 500;
-
-            &.sortable {
-                cursor: pointer;
-                &:hover {
-                    color: white;
-                }
-            }
-        }
-
-        .asset-row {
-            cursor: pointer;
-            &:hover {
-                background: #111;
-            }
-            td {
-                padding: 1rem;
-                border-bottom: 1px solid #222;
-            }
-        }
-
-        .asset-name-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-
-            .asset-logo {
-                width: 24px;
-                height: 24px;
-            }
-        }
-
-        .pl-cell {
-            &.profit {
-                color: #4caf50;
-            }
-            &.loss {
-                color: #f44336;
-            }
-
-            .pl-values {
-                display: flex;
-                flex-direction: column;
-                .pl-percent {
-                    font-size: 0.8rem;
-                    opacity: 0.8;
-                }
-            }
-        }
-
-        .toggle-icon {
-            font-size: 0.8rem;
-            color: #666;
-        }
-    }
-
-    .details-row {
-        background: #0a0a0a;
-        td {
-            padding: 0;
-        }
-    }
-
-    .transactions-list {
-        padding: 0.5rem 2rem;
-        border-bottom: 1px solid #222;
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #1a1a1a;
-            &:last-child {
-                border-bottom: none;
-            }
-
-            .t-info {
-                display: flex;
-                gap: 1.5rem;
-                font-size: 0.9rem;
-                .t-date { color: #666; width: 100px; }
-                .t-qty { font-weight: 500; width: 150px; }
-                .t-price { color: #888; }
-            }
-
-            .t-actions {
-                display: flex;
-                gap: 0.5rem;
-            }
-        }
-    }
-
-    .btn-icon {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        opacity: 0.6;
-        &:hover {
-            opacity: 1;
-        }
-        &.btn-delete:hover {
-            filter: hue-rotate(300deg);
-        }
-    }
+<style scoped>
+.t-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100000;
-
-    .modal-content {
-        background: #111;
-        padding: 2rem;
-        border-radius: 8px;
-        width: 300px;
-        color: white;
-
-        .inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin: 1rem 0;
-
-            input {
-                background: #222;
-                border: 1px solid #444;
-                color: white;
-                padding: 0.5rem;
-                border-radius: 4px;
-            }
-        }
-
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-    }
-}
-
-.btn-cancel {
-    background: #333;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-submit {
-    background: #4caf50;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    &:disabled {
-        background: #2e5a2f;
-        cursor: not-allowed;
-    }
-}
-
-.empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: #666;
-    border: 2px dashed #222;
-    border-radius: 8px;
+.transaction-item:hover .t-actions {
+    opacity: 1;
 }
 </style>

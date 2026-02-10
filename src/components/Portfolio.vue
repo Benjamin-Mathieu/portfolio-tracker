@@ -1,23 +1,21 @@
-<template>
-    <section class="portfolio">
-        <div style="width: 100%; text-align: center;">
-            <Overview></Overview>
-        </div>
 
-        <Chart></Chart>
-        <ListAssets></ListAssets>
+<template>
+    <section class="w-full">
+        <Overview></Overview>
+        <div class="flex flex-col items-center gap-8">
+            <ListAssets></ListAssets>
+        </div>
     </section>
 </template>
 
 <script>
 import { getListCrypto } from "../store";
-import Chart from "./Chart.vue";
 import ListAssets from "./ListAssets.vue";
 import Overview from "./Overview.vue";
 
 export default {
-    name: "Widget",
-    components: { Chart, ListAssets, Overview },
+    name: "Portfolio",
+    components: { ListAssets, Overview },
 
     setup() {
         getListCrypto(20);
@@ -25,11 +23,5 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-.portfolio {
-    margin-top: 1rem;
-    width: 100%;
-    text-align: center;
-}
+<style scoped>
 </style>
