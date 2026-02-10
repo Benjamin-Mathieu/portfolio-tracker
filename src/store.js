@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const URL_API = 'https://api.coingecko.com/api/v3';
 
-export const balance = ref(10000);
+
 export const cryptos = ref([]);
 export const queryCryptos = ref([]);
 export const globalData = ref([]);
@@ -107,6 +107,10 @@ export const aggregatedPortfolio = computed(() => {
             profitLossPercentage
         };
     });
+});
+
+export const balance = computed(() => {
+    return aggregatedPortfolio.value.reduce((acc, asset) => acc + asset.currentValue, 0);
 });
 
 export const getListCrypto = async (perPage) => {
