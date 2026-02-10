@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const URL_API = 'https://api.coingecko.com/api/v3';
 
+export const currency = ref('eur');
+export const curs_sym = computed(() => currency.value === 'eur' ? '€' : '$');
 
 export const cryptos = ref([]);
 export const queryCryptos = ref([]);
@@ -84,17 +86,35 @@ export const aggregatedPortfolio = computed(() => {
         asset.transactions.push(t);
     });
 
+    // Calculate exchange rate (Base EUR -> Target Currency)
+    let rate = 1;
+    if (currency.value !== 'eur' && globalData.value && globalData.value.total_market_cap) {
+        const caps = globalData.value.total_market_cap;
+        if (caps.eur && caps[currency.value]) {
+            rate = caps[currency.value] / caps.eur;
+        }
+    }
+
     return Array.from(map.values()).map(asset => {
         // Find current price and image from cryptos list if available
         const cryptoData = cryptos.value.find(c => c.symbol.toUpperCase() === asset.symbol.toUpperCase());
         const currentPrice = cryptoData ? cryptoData.current_price : 0;
         const image = cryptoData ? cryptoData.image : null;
 
-        const avgPrice = asset.totalQuantity > 0 ? asset.totalCost / asset.totalQuantity : 0;
-        const totalInvested = asset.totalCost;
+        // Apply rate to historical cost basis
+        const totalInvested = asset.totalCost * rate;
+
+        const avgPrice = asset.totalQuantity > 0 ? totalInvested / asset.totalQuantity : 0;
         const currentValue = asset.totalQuantity * currentPrice;
         const profitLoss = currentValue - totalInvested;
         const profitLossPercentage = totalInvested > 0 ? (profitLoss / totalInvested) * 100 : 0;
+
+        // Convert transactions for display
+        const displayTransactions = asset.transactions.map(t => ({
+            ...t,
+            purchasePrice: parseFloat(t.purchasePrice) * rate,
+            originalPrice: t.purchasePrice // Keep original for reference if needed
+        }));
 
         return {
             ...asset,
@@ -104,7 +124,8 @@ export const aggregatedPortfolio = computed(() => {
             totalInvested,
             currentValue,
             profitLoss,
-            profitLossPercentage
+            profitLossPercentage,
+            transactions: displayTransactions
         };
     });
 });
@@ -115,7 +136,7 @@ export const balance = computed(() => {
 
 export const getListCrypto = async (perPage) => {
     try {
-        const res = await axios.get(`${URL_API}/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`, {
+        const res = await axios.get(`${URL_API}/coins/markets?vs_currency=${currency.value}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`, {
             headers: { 'Accept': 'application/json' }
         });
         cryptos.value = res.data;
@@ -148,8 +169,8 @@ export const getGlobalData = async () => {
 
 export const getPriceCrypto = async (id) => {
     try {
-        const req = await axios.get(`${URL_API}/simple/price?ids=${id}&vs_currencies=eur`);
-        return req.data[id].eur;
+        const req = await axios.get(`${URL_API}/simple/price?ids=${id}&vs_currencies=${currency.value}`);
+        return req.data[id][currency.value];
     } catch (err) {
         console.error(err);
         return 0;

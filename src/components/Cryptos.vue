@@ -21,7 +21,7 @@
                             </div>
                         </td>
                         <td class="p-4 text-right text-white font-medium">
-                            {{ crypto.current_price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}
+                            {{ crypto.current_price.toLocaleString(currency === 'eur' ? 'fr-FR' : 'en-US', { style: 'currency', currency: currency.toUpperCase() }) }}
                         </td>
                         <td class="p-4 text-right">
                             <span
@@ -45,14 +45,14 @@
 </template>
 
 <script>
-import { getListCrypto, cryptos } from "../store"
+import { getListCrypto, cryptos, currency } from "../store"
 
 export default {
     name: 'Cryptos',
     setup() {
         getListCrypto(20);
 
-        return { cryptos }
+        return { cryptos, currency }
     }
 }
 </script>

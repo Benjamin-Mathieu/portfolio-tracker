@@ -157,7 +157,7 @@
 
 <script>
 import { ref, computed } from "vue";
-import { aggregatedPortfolio, deleteTransaction, editTransaction, exportPortfolio, importPortfolio } from "../store";
+import { aggregatedPortfolio, deleteTransaction, editTransaction, exportPortfolio, importPortfolio, currency } from "../store";
 import { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle } from 'lucide-vue-next';
 import Modal from "./ModalAddAsset.vue";
 
@@ -208,7 +208,7 @@ export default {
         };
 
         const formatCurrency = (val) => {
-            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(val);
+            return new Intl.NumberFormat(currency.value === 'eur' ? 'fr-FR' : 'en-US', { style: 'currency', currency: currency.value.toUpperCase() }).format(val);
         };
 
         const formatCrypto = (val) => {

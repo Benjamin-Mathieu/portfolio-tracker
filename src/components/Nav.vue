@@ -18,20 +18,38 @@
                 </div>
             </div>
             
-            <div class="ml-auto relative" style="flex-shrink: 0;">
-                <button @click="langOpen = !langOpen" class="flex items-center gap-2 p-1 rounded-md hover:bg-gray-800 transition-colors duration-300">
-                    <Globe :size="16" />
-                    <span class="text-lg">{{ currentLanguage === 'fr' ? '🇫🇷' : '🇬🇧' }}</span>
-                    <ChevronDown :size="16" :class="{ 'transform rotate-180': langOpen }" class="transition-transform duration-300" />
-                </button>
-                <div v-if="langOpen" class="fixed inset-0" style="z-index: 40;" @click="langOpen = false"></div>
-                <div v-if="langOpen" class="lang-dropdown">
-                    <a href="#" @click.prevent="selectLanguage('fr')" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-crypto-green transition-colors">
-                        <span>🇫🇷</span> Français
-                    </a>
-                    <a href="#" @click.prevent="selectLanguage('en')" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-crypto-green transition-colors">
-                        <span>🇬🇧</span> English
-                    </a>
+            <div class="ml-auto flex items-center gap-4" style="flex-shrink: 0;">
+                <div class="relative">
+                    <button @click="currencyOpen = !currencyOpen" class="flex items-center gap-2 p-1 rounded-md hover:bg-gray-800 transition-colors duration-300">
+                        <span class="text-lg">{{ currency === 'eur' ? '€' : '$' }}</span>
+                        <ChevronDown :size="16" :class="{ 'transform rotate-180': currencyOpen }" class="transition-transform duration-300" />
+                    </button>
+                    <div v-if="currencyOpen" class="fixed inset-0" style="z-index: 40;" @click="currencyOpen = false"></div>
+                    <div v-if="currencyOpen" class="dropdown-menu">
+                        <a href="#" @click.prevent="selectCurrency('eur')" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-crypto-green transition-colors">
+                            <span>€</span> EUR
+                        </a>
+                        <a href="#" @click.prevent="selectCurrency('usd')" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-crypto-green transition-colors">
+                            <span>$</span> USD
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <button @click="langOpen = !langOpen" class="flex items-center gap-2 p-1 rounded-md hover:bg-gray-800 transition-colors duration-300">
+                        <Globe :size="16" />
+                        <span class="text-lg">{{ currentLanguage === 'fr' ? '🇫🇷' : '🇬🇧' }}</span>
+                        <ChevronDown :size="16" :class="{ 'transform rotate-180': langOpen }" class="transition-transform duration-300" />
+                    </button>
+                    <div v-if="langOpen" class="fixed inset-0" style="z-index: 40;" @click="langOpen = false"></div>
+                    <div v-if="langOpen" class="dropdown-menu">
+                        <a href="#" @click.prevent="selectLanguage('fr')" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-crypto-green transition-colors">
+                            <span>🇫🇷</span> Français
+                        </a>
+                        <a href="#" @click.prevent="selectLanguage('en')" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-crypto-green transition-colors">
+                            <span>🇬🇧</span> English
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,7 +83,7 @@
 <script>
 import { ref, onMounted, computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { getGlobalData, globalData } from "../store"
+import { getGlobalData, globalData, currency, getListCrypto } from "../store"
 import { LayoutDashboard, Coins, Globe, ChevronDown } from 'lucide-vue-next'
 
 
@@ -87,6 +105,7 @@ export default {
     setup() {
         const { locale } = useI18n()
         const langOpen = ref(false)
+        const currencyOpen = ref(false)
 
         const currentLanguage = computed(() => locale.value)
 
@@ -95,11 +114,17 @@ export default {
             langOpen.value = false
         }
 
+        const selectCurrency = (curr) => {
+            currency.value = curr
+            currencyOpen.value = false
+            getListCrypto(20) // Default update
+        }
+
         onMounted(async () => {
             await getGlobalData();
         });
 
-        return { globalData, currentLanguage, selectLanguage, langOpen }
+        return { globalData, currentLanguage, selectLanguage, langOpen, currency, selectCurrency, currencyOpen }
     }
 }
 </script>
@@ -112,7 +137,7 @@ export default {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
-.lang-dropdown {
+.dropdown-menu {
     position: absolute;
     right: 0;
     top: 100%;
