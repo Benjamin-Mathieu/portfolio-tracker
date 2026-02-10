@@ -7,9 +7,7 @@
         </div>
         <div>
             <button @click="openModal()" class="btn-primary flex items-center gap-2 group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="12 4v16m8-8H4" />
-                </svg>
+                <PlusCircle class="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" />
                 <span class="text-lg">{{ $t('overview.add') }}</span>
             </button>
         </div>
@@ -22,10 +20,11 @@
 import { ref } from "vue"
 import { balance } from "../store"
 import Modal from "./ModalAddAsset.vue"
+import { PlusCircle } from 'lucide-vue-next'
 
 export default {
     name: "Overview",
-    components: { Modal },
+    components: { Modal, PlusCircle },
 
     setup() {
         const modalOpened = ref(false);

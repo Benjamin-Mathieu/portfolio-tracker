@@ -9,7 +9,7 @@
                         @click="close()" 
                         class="absolute right-4 top-4 text-gray-500 hover:text-red-500 transition-colors duration-300 font-bold text-xl"
                     >
-                        ✕
+                        <X class="h-6 w-6" />
                     </button>
 
                     <transition name="slide-fade" mode="out-in">
@@ -41,9 +41,7 @@
                                             </div>
                                         </div>
                                         <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-crypto-green">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" />
-                                            </svg>
+                                            <ChevronRight class="h-5 w-5" />
                                         </div>
                                     </div>
                                 </TransitionGroup>
@@ -53,9 +51,7 @@
                         <section v-else class="space-y-6">
                             <div class="flex items-center gap-4 mb-2">
                                 <button @click="asset.chosen = false" class="text-gray-400 hover:text-white transition-colors duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="10 19l-7-7m0 0l7-7m-7 7h18" />
-                                    </svg>
+                                    <ArrowLeft class="h-6 w-6" />
                                 </button>
                                 <h1 class="text-2xl font-bold text-white">{{ $t('modal.transaction') }}</h1>
                             </div>
@@ -108,9 +104,11 @@
 import { computed } from "@vue/reactivity";
 import { reactive, ref, watch } from "vue"
 import { searchCrypto, queryCryptos, getPriceCrypto, addTransaction } from "../store"
+import { X, ChevronRight, ArrowLeft } from 'lucide-vue-next'
 
 export default {
     name: 'Modal',
+    components: { X, ChevronRight, ArrowLeft },
     props: {
         show: {
             type: Boolean

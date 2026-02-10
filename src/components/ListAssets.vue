@@ -5,15 +5,11 @@
             <h3 class="text-2xl font-bold text-white">{{ $t('listAssets.yourAssets') }}</h3>
             <div class="flex gap-3">
                 <button @click="exportPortfolio" class="btn-secondary flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
+                    <Download class="h-4 w-4" />
                     {{ $t('listAssets.export') }}
                 </button>
                 <label class="btn-secondary flex items-center gap-2 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
-                    </svg>
+                    <Upload class="h-4 w-4" />
                     {{ $t('listAssets.import') }}
                     <input type="file" @change="handleImport" accept=".json" class="hidden" />
                 </label>
@@ -31,43 +27,43 @@
                         <th @click="handleSort('assetName')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.asset') || "Asset" }}
-                                <span v-if="sortBy === 'assetName'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'assetName'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th @click="handleSort('symbol')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.symbol') }}
-                                <span v-if="sortBy === 'symbol'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'symbol'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th @click="handleSort('totalQuantity')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.quantity') }}
-                                <span v-if="sortBy === 'totalQuantity'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'totalQuantity'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th @click="handleSort('currentPrice')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.currentPrice') || "Price" }}
-                                <span v-if="sortBy === 'currentPrice'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'currentPrice'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th @click="handleSort('avgPrice')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.avgPrice') }}
-                                <span v-if="sortBy === 'avgPrice'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'avgPrice'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th @click="handleSort('totalInvested')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.totalInvested') }}
-                                <span v-if="sortBy === 'totalInvested'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'totalInvested'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th @click="handleSort('profitLoss')" class="p-4 cursor-pointer hover:text-white transition-colors">
                             <div class="flex items-center gap-2">
                                 {{ $t('listAssets.profitLoss') || "P/L" }}
-                                <span v-if="sortBy === 'profitLoss'" class="text-crypto-green">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+                                <span v-if="sortBy === 'profitLoss'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
                             </div>
                         </th>
                         <th class="p-4">{{ $t('listAssets.action') }}</th>
@@ -97,14 +93,10 @@
                                 </div>
                             </td>
                             <td class="p-4">
-                                <svg 
-                                    xmlns="http://www.w3.org/2000/svg" 
+                                <ChevronDown 
                                     class="h-5 w-5 text-gray-600 group-hover:text-white transition-transform duration-300"
-                                    :style="expandedAssets.includes(asset.symbol) ? 'transform: rotate(180deg)' : ''"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                >
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="19 9l-7 7-7-7" />
-                                </svg>
+                                    :class="{ 'rotate-180': expandedAssets.includes(asset.symbol) }"
+                                />
                             </td>
                         </tr>
                         <tr v-if="expandedAssets.includes(asset.symbol)">
@@ -118,14 +110,10 @@
                                         </div>
                                         <div class="flex gap-2 t-actions">
                                             <button @click.stop="startEdit(t)" class="p-2 hover:bg-gray-800 rounded-md text-gray-400 hover:text-blue-400 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                </svg>
+                                                <Pencil class="h-4 w-4" />
                                             </button>
                                             <button @click.stop="confirmDelete(t.id)" class="p-2 hover:bg-gray-800 rounded-md text-gray-400 hover:text-red-400 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
+                                                <Trash2 class="h-4 w-4" />
                                             </button>
                                         </div>
                                     </div>
@@ -164,9 +152,11 @@
 <script>
 import { ref, computed } from "vue";
 import { aggregatedPortfolio, deleteTransaction, editTransaction, exportPortfolio, importPortfolio } from "../store";
+import { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2 } from 'lucide-vue-next';
 
 export default {
     name: 'ListAssets',
+    components: { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2 },
     setup() {
         const expandedAssets = ref([]);
         const editingTransaction = ref(null);

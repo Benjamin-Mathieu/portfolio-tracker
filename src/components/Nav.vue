@@ -20,10 +20,9 @@
             
             <div class="ml-auto relative" style="flex-shrink: 0;">
                 <button @click="langOpen = !langOpen" class="flex items-center gap-2 p-1 rounded-md hover:bg-gray-800 transition-colors duration-300">
+                    <Globe :size="16" />
                     <span class="text-lg">{{ currentLanguage === 'fr' ? '🇫🇷' : '🇬🇧' }}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <ChevronDown :size="16" :class="{ 'transform rotate-180': langOpen }" class="transition-transform duration-300" />
                 </button>
                 <div v-if="langOpen" class="fixed inset-0" style="z-index: 40;" @click="langOpen = false"></div>
                 <div v-if="langOpen" class="lang-dropdown">
@@ -41,17 +40,19 @@
             <ul class="flex gap-8">
                 <li
                     @click="$emit('showPortfolio')"
-                    class="text-2xl font-bold cursor-pointer transition-all duration-300 relative py-2"
+                    class="text-2xl font-bold cursor-pointer transition-all duration-300 relative py-2 flex items-center gap-3"
                     :class="toggleMenu ? 'text-white' : 'text-gray-600 hover:text-gray-400'"
                 >
+                    <LayoutDashboard :size="28" />
                     {{ $t('nav.portfolio') }}
                     <div v-if="toggleMenu" class="absolute bottom-0 left-0 w-full h-1 bg-crypto-green rounded-full" style="box-shadow: 0 0 10px greenyellow;"></div>
                 </li>
                 <li
                     @click="$emit('showCrypto')"
-                    class="text-2xl font-bold cursor-pointer transition-all duration-300 relative py-2"
+                    class="text-2xl font-bold cursor-pointer transition-all duration-300 relative py-2 flex items-center gap-3"
                     :class="!toggleMenu ? 'text-white' : 'text-gray-600 hover:text-gray-400'"
                 >
+                    <Coins :size="28" />
                     {{ $t('nav.cryptos') }}
                     <div v-if="!toggleMenu" class="absolute bottom-0 left-0 w-full h-1 bg-crypto-green rounded-full" style="box-shadow: 0 0 10px greenyellow;"></div>
                 </li>
@@ -65,10 +66,17 @@
 import { ref, onMounted, computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { getGlobalData, globalData } from "../store"
+import { LayoutDashboard, Coins, Globe, ChevronDown } from 'lucide-vue-next'
 
 
 export default {
     name: 'Nav',
+    components: {
+        LayoutDashboard,
+        Coins,
+        Globe,
+        ChevronDown
+    },
     props: {
         toggleMenu: {
             type: Boolean
