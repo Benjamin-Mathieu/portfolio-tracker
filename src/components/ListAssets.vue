@@ -4,6 +4,10 @@
         <div class="flex items-center justify-between mb-8">
             <h3 class="text-2xl font-bold text-white">{{ $t('listAssets.yourAssets') }}</h3>
             <div class="flex gap-3">
+                <button @click="openModal" class="btn-secondary flex items-center gap-2">
+                    <PlusCircle class="h-4 w-4" />
+                    {{ $t('overview.add') }}
+                </button>
                 <button @click="exportPortfolio" class="btn-secondary flex items-center gap-2">
                     <Download class="h-4 w-4" />
                     {{ $t('listAssets.export') }}
@@ -147,17 +151,21 @@
             </div>
         </teleport>
     </div>
+    
+    <Modal :show="modalOpened" @closeModal="modalOpened = false"></Modal>
 </template>
 
 <script>
 import { ref, computed } from "vue";
 import { aggregatedPortfolio, deleteTransaction, editTransaction, exportPortfolio, importPortfolio } from "../store";
-import { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2 } from 'lucide-vue-next';
+import { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle } from 'lucide-vue-next';
+import Modal from "./ModalAddAsset.vue";
 
 export default {
     name: 'ListAssets',
-    components: { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2 },
+    components: { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle, Modal },
     setup() {
+        const modalOpened = ref(false);
         const expandedAssets = ref([]);
         const editingTransaction = ref(null);
         const sortBy = ref('totalInvested');
@@ -247,6 +255,10 @@ export default {
             reader.readAsText(file);
         };
 
+        const openModal = () => {
+             modalOpened.value = true;
+        };
+
         return { 
             aggregatedPortfolio, 
             sortedPortfolio,
@@ -263,7 +275,9 @@ export default {
             startEdit,
             saveEdit,
             exportPortfolio,
-            handleImport
+            handleImport,
+            modalOpened,
+            openModal
         }
     }
 }
