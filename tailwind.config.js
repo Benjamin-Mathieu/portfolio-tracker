@@ -1,22 +1,15 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-    purge: ['./src/**/*.vue', './src/**/*.js'],
-    darkMode: false, // or 'media' or 'class'
+    content: [
+        "./index.html",
+        "./src/**/*.{vue,js,ts,jsx,tsx}",
+    ],
     theme: {
         extend: {
             colors: {
                 'dark-bg': '#212429',
                 'crypto-green': 'greenyellow',
             },
-        },
-    },
-    variants: {
-        extend: {
-            opacity: ['group-hover'],
-            visibility: ['group-hover'],
-            textColor: ['group-hover'],
-            backgroundColor: ['hover', 'active'],
-            scale: ['hover', 'active'],
-            transform: ['hover', 'group-hover'],
         },
     },
     plugins: [],
