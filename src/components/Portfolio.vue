@@ -1,8 +1,7 @@
-
 <template>
-    <section class="w-full">
-        <Overview></Overview>
-        <div class="flex flex-col items-center gap-8">
+    <section class="w-full max-w-7xl mx-auto" style="position: relative; z-index: 1;">
+        <div class="flex flex-col">
+            <Overview class="w-full"></Overview>
             <ListAssets></ListAssets>
         </div>
     </section>

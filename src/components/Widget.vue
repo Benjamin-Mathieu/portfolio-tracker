@@ -1,5 +1,8 @@
 <template>
-  <div class="container bg-blur">
+  <div class="main-container">
+    <!-- Ambient background effects -->
+    <div class="ambient-bg"></div>
+    
     <Nav
       :toggleMenu="toggleMenu"
       @showPortfolio="toggleMenu = true"
@@ -7,8 +10,10 @@
     ></Nav>
 
     <Transition name="toggle" mode="out-in">
-      <Portfolio v-if="toggleMenu === true"></Portfolio>
-      <Cryptos v-else></Cryptos>
+      <div class="w-full flex justify-center" style="position: relative; z-index: 1;">
+        <Portfolio v-if="toggleMenu === true"></Portfolio>
+        <Cryptos v-else></Cryptos>
+      </div>
     </Transition>
   </div>
 </template>
@@ -24,9 +29,7 @@ export default {
   components: { Nav, Portfolio, Cryptos },
 
   setup() {
-
     const toggleMenu = ref(true);
-
     return { toggleMenu }
   }
 }
@@ -35,47 +38,32 @@ export default {
 <style scoped lang="scss">
 .toggle-enter-active,
 .toggle-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .toggle-enter-from,
 .toggle-leave-to {
   opacity: 0;
-  transform: scale(0.7);
+  transform: translateY(8px);
 }
 
-.container {
-  height: 100%;
+.main-container {
+  min-height: 100vh;
   width: 100%;
   position: relative;
   display: flex;
-  align-items: center;
   flex-direction: column;
-  .text-gradient {
-    text-shadow: 0 0 80px rgb(192 219 255 / 75%), 0 0 32px rgb(65 120 255 / 24%);
-    color: white;
-  }
 }
 
-.bg-blur {
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
   overflow: hidden;
-  // background-color: transparent;
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    #fc077d10 0,
-    rgba(255, 255, 255, 0) 100%
-  );
-
-  // &::before {
-  //   content: "";
-  //   // background: url("../assets/img/bg-space.jpg");
-  //   // background-size: cover;
-
-  //   height: 100%;
-  //   width: 100%;
-  //   position: absolute;
-  //   filter: blur(20px);
-  //   z-index: -1;
-  // }
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -30%, rgba(163, 230, 53, 0.03), transparent),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(59, 130, 246, 0.03), transparent),
+    radial-gradient(ellipse 40% 50% at 10% 60%, rgba(139, 92, 246, 0.02), transparent);
 }
 </style>

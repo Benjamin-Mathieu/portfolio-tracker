@@ -1,64 +1,66 @@
-
 <template>
     <teleport v-if="show === true" to="body">
         <transition name="modal-fade">
             <div @click.self="close()" class="modal-overlay">
-                <div class="modal-box w-full max-w-lg" style="max-height: 50vh; overflow-y: auto;">
+                <div class="modal-box w-full max-w-lg" style="max-height: 60vh; overflow-y: auto;">
                     <button 
                         id="btn-close" 
                         @click="close()" 
-                        class="absolute right-4 top-4 text-gray-500 hover:text-red-500 transition-colors duration-300 font-bold text-xl"
+                        class="close-btn"
                     >
-                        <X class="h-6 w-6" />
+                        <X class="h-4 w-4" />
                     </button>
 
                     <transition name="slide-fade" mode="out-in">
+                        <!-- Step 1: Search coin -->
                         <section v-if="!asset.chosen" class="flex flex-col h-full">
-                            <div class="mb-6">
-                                <h1 class="text-2xl font-bold text-white">{{ $t('modal.chooseCoin') }}</h1>
+                            <div class="mb-5">
+                                <h1 class="text-lg font-bold text-white tracking-tight">{{ $t('modal.chooseCoin') }}</h1>
+                                <p class="text-xs text-gray-600 mt-1">Search and select a cryptocurrency</p>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-4 relative">
+                                <Search class="search-icon" :size="16" />
                                 <input 
                                     v-model="query" 
                                     type="text" 
                                     :placeholder="$t('modal.search')" 
                                     class="input-field"
+                                    style="padding-left: 2.5rem;"
                                 />
                             </div>
-                            <div class="overflow-y-auto max-h-[400px] scrollbar-hide">
-                                <TransitionGroup name="list" tag="div" class="space-y-1">
+                            <div class="overflow-y-auto max-h-[380px] scrollbar-hide">
+                                <TransitionGroup name="list" tag="div" class="space-y-0.5">
                                     <div
                                         @click="selectCrypto(crypto)"
-                                        class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800 cursor-pointer transition-all duration-300 group"
+                                        class="crypto-result-item"
                                         v-for="crypto in queryCryptos"
                                         :key="crypto.id"
                                     >
                                         <div class="flex items-center gap-3">
-                                            <img class="w-8 h-8 rounded-full" :src="crypto.thumb" />
+                                            <img class="w-8 h-8 rounded-full" style="border: 1px solid rgba(55,65,81,0.3);" :src="crypto.thumb" />
                                             <div>
-                                                <p class="font-semibold">{{ crypto.name }}</p>
-                                                <p class="text-xs text-gray-400">{{ crypto.symbol.toUpperCase() }}</p>
+                                                <p class="font-semibold text-white text-sm">{{ crypto.name }}</p>
+                                                <p class="text-xs text-gray-600 uppercase font-medium">{{ crypto.symbol }}</p>
                                             </div>
                                         </div>
-                                        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-crypto-green">
-                                            <ChevronRight class="h-5 w-5" />
-                                        </div>
+                                        <ChevronRight class="h-4 w-4 text-gray-700 group-hover:text-crypto-green transition-all duration-300" />
                                     </div>
                                 </TransitionGroup>
                             </div>
                         </section>
 
-                        <section v-else class="space-y-6">
-                            <div class="flex items-center gap-4 mb-2">
-                                <button @click="asset.chosen = false" class="text-gray-400 hover:text-white transition-colors duration-300">
-                                    <ArrowLeft class="h-6 w-6" />
+                        <!-- Step 2: Enter transaction -->
+                        <section v-else class="space-y-5">
+                            <div class="flex items-center gap-3 mb-2">
+                                <button @click="asset.chosen = false" class="back-btn">
+                                    <ArrowLeft class="h-4 w-4" />
                                 </button>
-                                <h1 class="text-2xl font-bold text-white">{{ $t('modal.transaction') }}</h1>
+                                <h1 class="text-lg font-bold text-white tracking-tight">{{ $t('modal.transaction') }}</h1>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="space-y-2">
-                                    <label for="inp-qty" class="text-sm font-medium text-gray-400">{{ $t('modal.quantity') }}</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label for="inp-qty" class="stat-label">{{ $t('modal.quantity') }}</label>
                                     <input
                                         v-model="asset.qty"
                                         type="number"
@@ -69,8 +71,8 @@
                                         class="input-field"
                                     />
                                 </div>
-                                <div class="space-y-2">
-                                    <label for="inp-price" class="text-sm font-medium text-gray-400">{{ $t('modal.pricePerCoin') }}</label>
+                                <div class="space-y-1.5">
+                                    <label for="inp-price" class="stat-label">{{ $t('modal.pricePerCoin') }}</label>
                                     <input 
                                         v-model="asset.price" 
                                         type="number" 
@@ -82,12 +84,12 @@
                                 </div>
                             </div>
 
-                            <div class="bg-gray-900 p-4 rounded-xl flex justify-between items-center">
-                                <h3 class="text-lg font-medium text-gray-300">{{ $t('modal.totalSpent') }}</h3>
-                                <span class="text-2xl font-bold text-crypto-green">{{ total.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}</span>
+                            <div class="total-display">
+                                <span class="text-xs font-medium text-gray-500">{{ $t('modal.totalSpent') }}</span>
+                                <span class="text-xl font-bold text-glow-green">{{ total.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}</span>
                             </div>
 
-                            <div class="flex justify-end gap-3 pt-4">
+                            <div class="flex justify-end gap-2.5 pt-1">
                                 <button class="btn-secondary" @click="close()">{{ $t('modal.cancel') }}</button>
                                 <button class="btn-primary" @click="submitTransaction" :disabled="!isValid">{{ $t('modal.add') }}</button>
                             </div>
@@ -104,11 +106,11 @@
 import { computed } from "@vue/reactivity";
 import { reactive, ref, watch } from "vue"
 import { searchCrypto, queryCryptos, getPriceCrypto, addTransaction } from "../store"
-import { X, ChevronRight, ArrowLeft } from 'lucide-vue-next'
+import { X, ChevronRight, ArrowLeft, Search } from 'lucide-vue-next'
 
 export default {
     name: 'Modal',
-    components: { X, ChevronRight, ArrowLeft },
+    components: { X, ChevronRight, ArrowLeft, Search },
     props: {
         show: {
             type: Boolean
@@ -178,7 +180,7 @@ export default {
 <style scoped>
 .modal-fade-enter-active,
 .modal-fade-leave-active {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
 }
 
 .modal-fade-enter-from,
@@ -193,38 +195,105 @@ export default {
 
 .modal-fade-enter-from .modal-box,
 .modal-fade-leave-to .modal-box {
-    transform: scale(0.9);
+    transform: scale(0.95) translateY(10px);
 }
 
 .slide-fade-enter-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.25s ease-out;
 }
 
 .slide-fade-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.2s ease-in;
 }
 
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateX(20px);
+  transform: translateX(16px);
   opacity: 0;
 }
 
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(8px);
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
+.close-btn {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: rgba(31, 41, 55, 0.3);
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+.close-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #374151;
+    pointer-events: none;
+}
+
+.crypto-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-radius: 0.625rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.crypto-result-item:hover {
+    background: rgba(31, 41, 55, 0.4);
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(55, 65, 81, 0.3);
+    background: rgba(17, 24, 39, 0.6);
+    color: #9ca3af;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: rgba(31, 41, 55, 0.6);
+    color: white;
+    border-color: rgba(75, 85, 99, 0.4);
+}
+
+.total-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    background: rgba(10, 11, 15, 0.6);
+    border: 1px solid rgba(55, 65, 81, 0.2);
 }
 </style>

@@ -1,123 +1,158 @@
-
 <template>
-    <div class="px-4 py-8 max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-            <h3 class="text-2xl font-bold text-white">{{ $t('listAssets.yourAssets') }}</h3>
-            <div class="flex gap-3">
-                <button @click="openModal" class="btn-secondary flex items-center gap-2">
-                    <PlusCircle class="h-4 w-4" />
+    <div class="px-6 pb-8 max-w-7xl mx-auto w-full">
+        <!-- Section header -->
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-base font-semibold text-white tracking-tight flex items-center gap-2.5">
+                <div class="section-indicator"></div>
+                {{ $t('listAssets.yourAssets') }}
+                <span v-if="aggregatedPortfolio.length > 0" class="asset-count">{{ aggregatedPortfolio.length }}</span>
+            </h3>
+            <div class="flex gap-2">
+                <button @click="openModal" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                    <PlusCircle class="h-3.5 w-3.5" />
                     {{ $t('overview.add') }}
                 </button>
-                <button @click="exportPortfolio" class="btn-secondary flex items-center gap-2">
-                    <Download class="h-4 w-4" />
+                <button @click="exportPortfolio" class="btn-secondary" style="padding: 0.5rem 0.875rem; font-size: 0.75rem;">
+                    <Download class="h-3.5 w-3.5" />
                     {{ $t('listAssets.export') }}
                 </button>
-                <label class="btn-secondary flex items-center gap-2 cursor-pointer">
-                    <Upload class="h-4 w-4" />
+                <label class="btn-secondary cursor-pointer" style="padding: 0.5rem 0.875rem; font-size: 0.75rem;">
+                    <Upload class="h-3.5 w-3.5" />
                     {{ $t('listAssets.import') }}
                     <input type="file" @change="handleImport" accept=".json" class="hidden" />
                 </label>
             </div>
         </div>
 
-        <div v-if="aggregatedPortfolio.length === 0" class="text-center py-20 border-2 border-dashed border-gray-800 rounded-2xl">
-            <p class="text-gray-500 text-lg">{{ $t('listAssets.noAssets') || "No assets added yet." }}</p>
+        <!-- Empty state -->
+        <div v-if="aggregatedPortfolio.length === 0" class="empty-state">
+            <div class="empty-state-icon">
+                <Layers :size="24" />
+            </div>
+            <h3>{{ $t('listAssets.noAssets') }}</h3>
+            <p>{{ $t('listAssets.noAssetsDescription') }}</p>
+            <button @click="openModal" class="btn-primary" style="margin-top: 1.25rem; font-size: 0.75rem;">
+                <PlusCircle class="h-4 w-4" />
+                {{ $t('listAssets.addFirst') }}
+            </button>
         </div>
 
-        <div v-else class="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900">
-            <table class="w-full text-left border-collapse">
+        <!-- Table -->
+        <div v-else class="glass-card overflow-hidden" style="padding: 0;">
+            <table class="data-table">
                 <thead>
-                    <tr class="bg-gray-800 text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                        <th @click="handleSort('assetName')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
-                                {{ $t('listAssets.asset') || "Asset" }}
-                                <span v-if="sortBy === 'assetName'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
+                    <tr>
+                        <th @click="handleSort('assetName')" class="cursor-pointer group">
+                            <div class="th-inner">
+                                {{ $t('listAssets.asset') }}
+                                <span v-if="sortBy === 'assetName'" class="sort-icon">
+                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                    <ChevronDown v-else class="h-3 w-3" />
+                                </span>
                             </div>
                         </th>
-                        <th @click="handleSort('symbol')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
-                                {{ $t('listAssets.symbol') }}
-                                <span v-if="sortBy === 'symbol'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
+                        <th @click="handleSort('currentPrice')" class="cursor-pointer">
+                            <div class="th-inner">
+                                {{ $t('listAssets.currentPrice') }}
+                                <span v-if="sortBy === 'currentPrice'" class="sort-icon">
+                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                    <ChevronDown v-else class="h-3 w-3" />
+                                </span>
                             </div>
                         </th>
-                        <th @click="handleSort('totalQuantity')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
+                        <th @click="handleSort('totalQuantity')" class="cursor-pointer">
+                            <div class="th-inner">
                                 {{ $t('listAssets.quantity') }}
-                                <span v-if="sortBy === 'totalQuantity'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
+                                <span v-if="sortBy === 'totalQuantity'" class="sort-icon">
+                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                    <ChevronDown v-else class="h-3 w-3" />
+                                </span>
                             </div>
                         </th>
-                        <th @click="handleSort('currentPrice')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
-                                {{ $t('listAssets.currentPrice') || "Price" }}
-                                <span v-if="sortBy === 'currentPrice'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
-                            </div>
-                        </th>
-                        <th @click="handleSort('avgPrice')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
+                        <th @click="handleSort('avgPrice')" class="cursor-pointer">
+                            <div class="th-inner">
                                 {{ $t('listAssets.avgPrice') }}
-                                <span v-if="sortBy === 'avgPrice'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
+                                <span v-if="sortBy === 'avgPrice'" class="sort-icon">
+                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                    <ChevronDown v-else class="h-3 w-3" />
+                                </span>
                             </div>
                         </th>
-                        <th @click="handleSort('totalInvested')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
+                        <th @click="handleSort('totalInvested')" class="cursor-pointer">
+                            <div class="th-inner">
                                 {{ $t('listAssets.totalInvested') }}
-                                <span v-if="sortBy === 'totalInvested'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
+                                <span v-if="sortBy === 'totalInvested'" class="sort-icon">
+                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                    <ChevronDown v-else class="h-3 w-3" />
+                                </span>
                             </div>
                         </th>
-                        <th @click="handleSort('profitLoss')" class="p-4 cursor-pointer hover:text-white transition-colors">
-                            <div class="flex items-center gap-2">
-                                {{ $t('listAssets.profitLoss') || "P/L" }}
-                                <span v-if="sortBy === 'profitLoss'" class="text-crypto-green">                                <ChevronUp v-if="sortOrder === 'asc'" class="h-4 w-4 inline" /><ChevronDown v-else class="h-4 w-4 inline" /></span>
+                        <th @click="handleSort('profitLoss')" class="cursor-pointer">
+                            <div class="th-inner">
+                                {{ $t('listAssets.profitLoss') }}
+                                <span v-if="sortBy === 'profitLoss'" class="sort-icon">
+                                    <ChevronUp v-if="sortOrder === 'asc'" class="h-3 w-3" />
+                                    <ChevronDown v-else class="h-3 w-3" />
+                                </span>
                             </div>
                         </th>
-                        <th class="p-4">{{ $t('listAssets.action') }}</th>
+                        <th style="width: 3rem;"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-800">
+                <tbody>
                     <template v-for="asset in sortedPortfolio" :key="asset.symbol">
                         <tr 
-                            class="hover:bg-gray-800 cursor-pointer transition-colors duration-200 group" 
+                            class="cursor-pointer group"
                             @click="toggleDetails(asset.symbol)"
                         >
-                            <td class="p-4">
+                            <td>
                                 <div class="flex items-center gap-3">
-                                    <img v-if="asset.image" :src="asset.image" class="w-8 h-8 rounded-full" />
-                                    <span class="font-semibold text-white">{{ asset.assetName }}</span>
+                                    <img v-if="asset.image" :src="asset.image" class="asset-img" />
+                                    <div class="flex flex-col">
+                                        <span class="font-semibold text-white text-sm">{{ asset.assetName }}</span>
+                                        <span class="text-gray-600 text-xs font-medium uppercase">{{ asset.symbol }}</span>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="p-4 text-gray-400 font-medium">{{ asset.symbol }}</td>
-                            <td class="p-4 text-white font-medium">{{ formatCrypto(asset.totalQuantity) }}</td>
-                            <td class="p-4 text-white font-medium">{{ formatCurrency(asset.currentPrice) }}</td>
-                            <td class="p-4 text-white font-medium">{{ formatCurrency(asset.avgPrice) }}</td>
-                            <td class="p-4 text-white font-medium">{{ formatCurrency(asset.totalInvested) }}</td>
-                            <td class="p-4">
-                                <div :class="[asset.profitLoss >= 0 ? 'text-green-400' : 'text-red-400', 'flex flex-col']">
-                                    <span class="font-bold">{{ formatCurrency(asset.profitLoss) }}</span>
-                                    <span class="text-xs opacity-80">{{ asset.profitLossPercentage.toFixed(2) }}%</span>
+                            <td class="text-white font-medium text-sm tabular-nums">{{ formatCurrency(asset.currentPrice) }}</td>
+                            <td class="text-gray-300 font-medium text-sm tabular-nums">{{ formatCrypto(asset.totalQuantity) }}</td>
+                            <td class="text-gray-400 text-sm tabular-nums">{{ formatCurrency(asset.avgPrice) }}</td>
+                            <td class="text-white font-medium text-sm tabular-nums">{{ formatCurrency(asset.totalInvested) }}</td>
+                            <td>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold tabular-nums" :class="asset.profitLoss >= 0 ? 'text-green-400' : 'text-red-400'">
+                                        {{ formatCurrency(asset.profitLoss) }}
+                                    </span>
+                                    <span class="text-xs tabular-nums" :class="asset.profitLossPercentage >= 0 ? 'text-green-400' : 'text-red-400'" style="opacity: 0.7;">
+                                        {{ asset.profitLossPercentage >= 0 ? '+' : '' }}{{ asset.profitLossPercentage.toFixed(2) }}%
+                                    </span>
                                 </div>
                             </td>
-                            <td class="p-4">
+                            <td>
                                 <ChevronDown 
-                                    class="h-5 w-5 text-gray-600 group-hover:text-white transition-transform duration-300"
-                                    :class="{ 'rotate-180': expandedAssets.includes(asset.symbol) }"
+                                    class="h-4 w-4 text-gray-700 group-hover:text-gray-500 transition-all duration-300"
+                                    :class="{ 'rotate-180 text-gray-500': expandedAssets.includes(asset.symbol) }"
                                 />
                             </td>
                         </tr>
-                        <tr v-if="expandedAssets.includes(asset.symbol)">
-                            <td colspan="8" class="p-0 bg-gray-800">
-                                <div class="px-8 py-4 space-y-2 border-l-2 border-crypto-green ml-4 my-2">
-                                    <div v-for="t in asset.transactions" :key="t.id" class="flex items-center justify-between py-2 border-b border-gray-700 transaction-item">
-                                        <div class="flex gap-8 text-sm">
-                                            <span class="text-gray-500 w-24">{{ formatDate(t.timestamp) }}</span>
-                                            <span class="text-white font-medium w-32">{{ formatCrypto(t.quantity) }} {{ t.symbol }}</span>
-                                            <span class="text-gray-400">@ {{ formatCurrency(t.purchasePrice) }}</span>
+
+                        <!-- Expanded detail row -->
+                        <tr v-if="expandedAssets.includes(asset.symbol)" class="expanded-row">
+                            <td colspan="7" style="padding: 0;">
+                                <div class="expanded-content">
+                                    <div v-for="t in asset.transactions" :key="t.id" class="transaction-row">
+                                        <div class="flex gap-6 items-center text-sm">
+                                            <span class="text-gray-600 text-xs w-20 tabular-nums">{{ formatDate(t.timestamp) }}</span>
+                                            <span class="text-white font-medium tabular-nums">{{ formatCrypto(t.quantity) }} <span class="text-gray-500">{{ t.symbol }}</span></span>
+                                            <span class="text-gray-500">@</span>
+                                            <span class="text-gray-400 tabular-nums">{{ formatCurrency(t.purchasePrice) }}</span>
                                         </div>
-                                        <div class="flex gap-2 t-actions">
-                                            <button @click.stop="startEdit(t)" class="p-2 hover:bg-gray-800 rounded-md text-gray-400 hover:text-blue-400 transition-colors">
-                                                <Pencil class="h-4 w-4" />
+                                        <div class="flex gap-1 t-actions">
+                                            <button @click.stop="startEdit(t)" class="action-btn edit">
+                                                <Pencil class="h-3.5 w-3.5" />
                                             </button>
-                                            <button @click.stop="confirmDelete(t.id)" class="p-2 hover:bg-gray-800 rounded-md text-gray-400 hover:text-red-400 transition-colors">
-                                                <Trash2 class="h-4 w-4" />
+                                            <button @click.stop="confirmDelete(t.id)" class="action-btn delete">
+                                                <Trash2 class="h-3.5 w-3.5" />
                                             </button>
                                         </div>
                                     </div>
@@ -129,17 +164,18 @@
             </table>
         </div>
 
+        <!-- Edit modal -->
         <teleport v-if="editingTransaction" to="body">
             <div class="modal-overlay">
                 <div class="modal-box w-full max-w-md">
-                    <h3 class="text-xl font-bold text-white mb-6">{{ $t('listAssets.edit') }} {{ editingTransaction.assetName }}</h3>
+                    <h3 class="text-lg font-bold text-white mb-6">{{ $t('listAssets.edit') }} {{ editingTransaction.assetName }}</h3>
                     <div class="space-y-4">
                         <div class="space-y-2">
-                            <label class="text-sm font-medium text-gray-400">{{ $t('modal.quantity') }}</label>
+                            <label class="stat-label">{{ $t('modal.quantity') }}</label>
                             <input type="number" step="any" v-model="editingTransaction.quantity" class="input-field" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-sm font-medium text-gray-400">{{ $t('modal.pricePerCoin') }}</label>
+                            <label class="stat-label">{{ $t('modal.pricePerCoin') }}</label>
                             <input type="number" step="any" v-model="editingTransaction.purchasePrice" class="input-field" />
                         </div>
                     </div>
@@ -158,12 +194,12 @@
 <script>
 import { ref, computed } from "vue";
 import { aggregatedPortfolio, deleteTransaction, editTransaction, exportPortfolio, importPortfolio, currency } from "../store";
-import { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle } from 'lucide-vue-next';
+import { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle, Layers } from 'lucide-vue-next';
 import Modal from "./ModalAddAsset.vue";
 
 export default {
     name: 'ListAssets',
-    components: { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle, Modal },
+    components: { Download, Upload, ChevronDown, ChevronUp, Pencil, Trash2, PlusCircle, Layers, Modal },
     setup() {
         const modalOpened = ref(false);
         const expandedAssets = ref([]);
@@ -284,11 +320,104 @@ export default {
 </script>
 
 <style scoped>
+.section-indicator {
+    width: 3px;
+    height: 1rem;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #a3e635, #65a30d);
+}
+
+.asset-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 0.375rem;
+    background: rgba(163, 230, 53, 0.1);
+    color: #a3e635;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0 0.375rem;
+}
+
+.th-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    user-select: none;
+}
+
+.th-inner:hover {
+    color: #9ca3af;
+}
+
+.sort-icon {
+    color: #a3e635;
+}
+
+.asset-img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid rgba(55, 65, 81, 0.3);
+}
+
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+.expanded-row td {
+    background: rgba(10, 11, 15, 0.5);
+}
+
+.expanded-content {
+    padding: 0.5rem 1.25rem 0.5rem 3.5rem;
+    border-left: 2px solid rgba(163, 230, 53, 0.2);
+    margin-left: 1.25rem;
+}
+
+.transaction-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid rgba(31, 41, 55, 0.15);
+}
+
+.transaction-row:last-child {
+    border-bottom: none;
+}
+
 .t-actions {
     opacity: 0;
     transition: opacity 0.2s ease;
 }
-.transaction-item:hover .t-actions {
+
+.transaction-row:hover .t-actions {
     opacity: 1;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem;
+    border-radius: 0.375rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #4b5563;
+    transition: all 0.2s ease;
+}
+
+.action-btn.edit:hover {
+    color: #60a5fa;
+    background: rgba(59, 130, 246, 0.08);
+}
+
+.action-btn.delete:hover {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.08);
 }
 </style>

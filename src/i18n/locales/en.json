@@ -9,11 +9,15 @@
     },
     "overview": {
         "currentBalance": "Current Balance",
-        "add": "Add"
+        "add": "Add",
+        "totalInvested": "Total Invested",
+        "totalProfitLoss": "Profit / Loss",
+        "assets": "Assets",
+        "allocation": "Allocation"
     },
     "modal": {
         "chooseCoin": "Choose a coin",
-        "search": "Search",
+        "search": "Search...",
         "transaction": "Transaction",
         "quantity": "Quantity",
         "pricePerCoin": "Price per coin",
@@ -26,10 +30,15 @@
         "rank": "Rank",
         "coin": "Coin",
         "currentPrice": "Current Price",
-        "h24": "24h"
+        "h24": "24h",
+        "marketCap": "Market Cap",
+        "volume": "Volume 24h"
     },
     "listAssets": {
         "yourAssets": "Your assets",
+        "noAssets": "No assets yet",
+        "noAssetsDescription": "Start by adding your first crypto asset to track your portfolio.",
+        "addFirst": "Add an asset",
         "symbol": "Symbol",
         "quantity": "Quantity",
         "avgPrice": "Avg Price",

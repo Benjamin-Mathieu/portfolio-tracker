@@ -9,11 +9,15 @@
     },
     "overview": {
         "currentBalance": "Solde actuel",
-        "add": "Ajouter"
+        "add": "Ajouter",
+        "totalInvested": "Total investi",
+        "totalProfitLoss": "Profit / Perte",
+        "assets": "Actifs",
+        "allocation": "Allocation"
     },
     "modal": {
         "chooseCoin": "Choisissez un coin",
-        "search": "Rechercher",
+        "search": "Rechercher...",
         "transaction": "Transaction",
         "quantity": "Quantité",
         "pricePerCoin": "Prix par coin",
@@ -26,10 +30,15 @@
         "rank": "Rang",
         "coin": "Monnaie",
         "currentPrice": "Cours actuel",
-        "h24": "24h"
+        "h24": "24h",
+        "marketCap": "Cap. marché",
+        "volume": "Volume 24h"
     },
     "listAssets": {
         "yourAssets": "Vos actifs",
+        "noAssets": "Aucun actif pour le moment",
+        "noAssetsDescription": "Commencez par ajouter votre premier actif crypto pour suivre votre portefeuille.",
+        "addFirst": "Ajouter un actif",
         "symbol": "Symbole",
         "quantity": "Quantité",
         "avgPrice": "Prix moy.",
