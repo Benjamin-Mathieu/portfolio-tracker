@@ -3,16 +3,18 @@
     <!-- Ambient background effects -->
     <div class="ambient-bg"></div>
     
-    <Nav
+    <AppNav
       :toggleMenu="toggleMenu"
       @showPortfolio="toggleMenu = true"
       @showCrypto="toggleMenu = false"
-    ></Nav>
+    ></AppNav>
 
     <Transition name="toggle" mode="out-in">
-      <div class="w-full flex justify-center" style="position: relative; z-index: 1;">
-        <Portfolio v-if="toggleMenu === true"></Portfolio>
-        <Cryptos v-else></Cryptos>
+      <div v-if="toggleMenu" key="portfolio" class="w-full flex justify-center" style="position: relative; z-index: 1;">
+        <Portfolio></Portfolio>
+      </div>
+      <div v-else key="cryptos" class="w-full flex justify-center" style="position: relative; z-index: 1;">
+        <Cryptos></Cryptos>
       </div>
     </Transition>
   </div>
@@ -20,13 +22,13 @@
 
 <script>
 import { ref } from "vue";
-import Nav from "./Nav.vue";
+import AppNav from "./Nav.vue";
 import Portfolio from "./Portfolio.vue";
 import Cryptos from "./Cryptos.vue";
 
 export default {
   name: "Widget",
-  components: { Nav, Portfolio, Cryptos },
+  components: { AppNav, Portfolio, Cryptos },
 
   setup() {
     const toggleMenu = ref(true);

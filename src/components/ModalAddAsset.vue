@@ -1,7 +1,7 @@
 <template>
     <teleport v-if="show === true" to="body">
         <transition name="modal-fade">
-            <div @click.self="close()" class="modal-overlay">
+            <div v-if="show" @click.self="close()" class="modal-overlay">
                 <div class="modal-box w-full max-w-lg" style="max-height: 60vh; overflow-y: auto;">
                     <button 
                         id="btn-close" 
@@ -19,7 +19,7 @@
                                 <p class="text-xs text-gray-600 mt-1">Search and select a cryptocurrency</p>
                             </div>
                             <div class="mb-4 relative">
-                                <Search class="search-icon" :size="16" />
+                                <SearchIcon class="search-icon" :size="16" />
                                 <input 
                                     v-model="query" 
                                     type="text" 
@@ -103,14 +103,14 @@
 
 
 <script>
-import { computed } from "@vue/reactivity";
+import { computed } from "vue";
 import { reactive, ref, watch } from "vue"
 import { searchCrypto, queryCryptos, getPriceCrypto, addTransaction } from "../store"
-import { X, ChevronRight, ArrowLeft, Search } from 'lucide-vue-next'
+import { X, ChevronRight, ArrowLeft, Search as SearchIcon } from 'lucide-vue-next'
 
 export default {
     name: 'Modal',
-    components: { X, ChevronRight, ArrowLeft, Search },
+    components: { X, ChevronRight, ArrowLeft, SearchIcon },
     props: {
         show: {
             type: Boolean

@@ -102,7 +102,7 @@ import { LayoutDashboard, Coins, Globe, ChevronDown } from 'lucide-vue-next'
 
 
 export default {
-    name: 'Nav',
+    name: 'AppNav',
     components: {
         LayoutDashboard,
         Coins,
