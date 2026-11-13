@@ -49,20 +49,22 @@
                 <div class="relative">
                     <button @click="langOpen = !langOpen" class="selector-btn">
                         <Globe :size="14" class="text-gray-500" />
-                        <span class="text-sm">{{ currentLanguage === 'fr' ? '🇫🇷' : '🇬🇧' }}</span>
+                        <span class="text-sm">{{ currentFlag }}</span>
                         <ChevronDown :size="14" :class="{ 'rotate-180': langOpen }" class="transition-transform duration-300 text-gray-600" />
                     </button>
                     <div v-if="langOpen" class="fixed inset-0" style="z-index: 40;" @click="langOpen = false"></div>
                     <div v-if="langOpen" class="dropdown-menu">
-                        <a href="#" @click.prevent="selectLanguage('fr')" class="dropdown-item" :class="{ 'active': currentLanguage === 'fr' }">
-                            <span>🇫🇷</span>
-                            <span>Français</span>
-                            <span v-if="currentLanguage === 'fr'" class="ml-auto text-crypto-green">✓</span>
-                        </a>
-                        <a href="#" @click.prevent="selectLanguage('en')" class="dropdown-item" :class="{ 'active': currentLanguage === 'en' }">
-                            <span>🇬🇧</span>
-                            <span>English</span>
-                            <span v-if="currentLanguage === 'en'" class="ml-auto text-crypto-green">✓</span>
+                        <a
+                            v-for="lang in languages"
+                            :key="lang.code"
+                            href="#"
+                            @click.prevent="selectLanguage(lang.code)"
+                            class="dropdown-item"
+                            :class="{ 'active': currentLanguage === lang.code }"
+                        >
+                            <span>{{ lang.flag }}</span>
+                            <span>{{ lang.label }}</span>
+                            <span v-if="currentLanguage === lang.code" class="ml-auto text-crypto-green">✓</span>
                         </a>
                     </div>
                 </div>
@@ -121,7 +123,14 @@ export default {
         const langOpen = ref(false)
         const currencyOpen = ref(false)
 
+        const languages = [
+            { code: 'fr', label: 'Français', flag: '🇫🇷' },
+            { code: 'en', label: 'English', flag: '🇬🇧' },
+            { code: 'de', label: 'Deutsch', flag: '🇩🇪' }
+        ]
+
         const currentLanguage = computed(() => locale.value)
+        const currentFlag = computed(() => languages.find(l => l.code === locale.value)?.flag || '🇬🇧')
 
         const selectLanguage = (lang) => {
             locale.value = lang
@@ -138,7 +147,7 @@ export default {
             await getGlobalData();
         });
 
-        return { globalData, currentLanguage, selectLanguage, langOpen, currency, selectCurrency, currencyOpen }
+        return { globalData, languages, currentLanguage, currentFlag, selectLanguage, langOpen, currency, selectCurrency, currencyOpen }
     }
 }
 </script>

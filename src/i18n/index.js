@@ -1,6 +1,7 @@
 import { createI18n } from 'vue-i18n'
 import en from './locales/en.json'
 import fr from './locales/fr.json'
+import de from './locales/de.json'
 
 const i18n = createI18n({
     legacy: false, // Vu3 3 uses Composition API
@@ -8,7 +9,8 @@ const i18n = createI18n({
     fallbackLocale: 'en',
     messages: {
         en,
-        fr
+        fr,
+        de
     }
 })
 
