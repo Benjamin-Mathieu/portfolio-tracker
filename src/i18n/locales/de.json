@@ -1,0 +1,55 @@
+{
+    "nav": {
+        "currencies": "Währungen",
+        "markets": "Märkte",
+        "dominance": "Dominanz",
+        "portfolio": "Portfolio",
+        "cryptos": "Kryptos",
+        "language": "Sprache"
+    },
+    "overview": {
+        "currentBalance": "Aktuelles Guthaben",
+        "add": "Hinzufügen",
+        "totalInvested": "Gesamtinvestition",
+        "totalProfitLoss": "Gewinn / Verlust",
+        "assets": "Vermögenswerte",
+        "allocation": "Allokation"
+    },
+    "modal": {
+        "chooseCoin": "Coin auswählen",
+        "search": "Suchen...",
+        "transaction": "Transaktion",
+        "quantity": "Menge",
+        "pricePerCoin": "Preis pro Coin",
+        "totalSpent": "Gesamtausgaben",
+        "add": "Hinzufügen",
+        "cancel": "Abbrechen",
+        "save": "Speichern"
+    },
+    "cryptos": {
+        "rank": "Rang",
+        "coin": "Coin",
+        "currentPrice": "Aktueller Kurs",
+        "h24": "24h",
+        "marketCap": "Marktkap.",
+        "volume": "Volumen 24h"
+    },
+    "listAssets": {
+        "yourAssets": "Ihre Vermögenswerte",
+        "noAssets": "Noch keine Vermögenswerte",
+        "noAssetsDescription": "Beginnen Sie damit, Ihren ersten Krypto-Vermögenswert hinzuzufügen, um Ihr Portfolio zu verfolgen.",
+        "addFirst": "Vermögenswert hinzufügen",
+        "symbol": "Symbol",
+        "quantity": "Menge",
+        "avgPrice": "Durchschn.-Preis",
+        "totalInvested": "Gesamtinvestition",
+        "action": "Aktion",
+        "delete": "Löschen",
+        "edit": "Bearbeiten",
+        "export": "Exportieren",
+        "import": "Importieren",
+        "asset": "Vermögenswert",
+        "currentPrice": "Preis",
+        "profitLoss": "G/V"
+    }
+}
